@@ -22,6 +22,14 @@ jobs:
           toolchain: stable
           components: rustfmt, clippy
 
+
+
+      - name: Install cargo-generate
+        run: |
+          cargo install cargo-generate
+          cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent
+
+
       # 3. キャッシュの設定（ビルド高速化！）
       - name: Cache cargo registry
         uses: actions/cache@v4
@@ -32,15 +40,10 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       # Rustのインストールステップの直後に追加！
-      - name: Install cargo-generate
-        run: cargo install cargo-generate
 
 
-      # 4. ビルドとテストの実行
-      - name: Build
-        run: |
-          cargo generate --git https://github.com/rustwasm/wasm-pack-template
-          cargo build --verbose
+      - name: Generate project
+        run: cargo build --verbose
 
       - name: Run tests
         run: cargo test --verbose
