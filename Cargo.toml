@@ -1,0 +1,17 @@
+[package]
+name = "we-wasm-world"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2"
+# 描画用ライブラリ
+wgpu = "24.0" # WebGPU向け
+# 行列演算用
+glam = "0.29"
+# ブラウザAPIとの連携
+web-sys = { version = "0.3", features = ["HtmlCanvasElement", "Window", "Document", "Element"] }
+js-sys = "0.3"
