@@ -81,5 +81,9 @@ jobs:
       pages: write
       id-token: write
     steps:
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+
+      - name: GitHub Pages用アーティファクト作成
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages  # ← ここを "github-pages" に固定する！
+          path: ./    # デプロイ対象のフォルダ
