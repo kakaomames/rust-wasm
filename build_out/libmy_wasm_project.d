@@ -1,0 +1,1 @@
+/home/runner/work/rust-wasm/rust-wasm/my-wasm-project/target/debug/libmy_wasm_project.rlib: /home/runner/work/rust-wasm/rust-wasm/my-wasm-project/src/lib.rs /home/runner/work/rust-wasm/rust-wasm/my-wasm-project/src/utils.rs
