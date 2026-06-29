@@ -1,0 +1,80 @@
+name: Rust CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Install cargo-generate
+        run: cargo install cargo-generate
+
+      # プロジェクト生成（ここで一度だけ生成する）
+      - name: Generate project
+        run: cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            my-wasm-project/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # すべてのビルド・テストステップで working-directory を指定する！
+      - name: Build
+        working-directory: ./my-wasm-project
+        run: cargo build --verbose
+
+      - name: Run tests
+        working-directory: ./my-wasm-project
+        run: cargo test --verbose
+
+      # ビルド成果物を build_out に移動させる（適宜調整してくれ！）
+      - name: Prepare build artifacts
+        run: |
+          mkdir -p build_out
+          cp -r my-wasm-project/target/debug/* build_out/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gem-os-wasm
+          path: build_out/*
+
+      - name: Commit and Push Logs
+        run: |
+          git config --global user.name "Gemini-Bot"
+          git config --global user.email "bot@example.com"
+          git add . || true
+          if git diff --cached --quiet; then
+            echo "✨ ログ変更なし。"
+          else
+            git commit -m "chore: 📝 自動ビルドログを更新 [skip ci]" || true
+            git push origin HEAD:main || true
+            echo "✅ ログの同期完了！"
+          fi
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
