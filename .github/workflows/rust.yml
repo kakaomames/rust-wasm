@@ -28,6 +28,7 @@ jobs:
         run: |
           cargo install cargo-generate
           cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent
+          cd my-wasm-project
 
 
       # 3. キャッシュの設定（ビルド高速化！）
