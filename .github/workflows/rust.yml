@@ -34,7 +34,40 @@ jobs:
 
       # 4. ビルドとテストの実行
       - name: Build
-        run: cargo build --verbose
+        run: |
+          cargo generate --git https://github.com/rustwasm/wasm-pack-template
+          cargo build --verbose
 
       - name: Run tests
         run: cargo test --verbose
+      - name: ビルド成果物をアップロード
+        uses: actions/upload-artifact@v4
+        with:
+          name: gem-os-wasm
+          path: build_out/*
+
+      - name: GitHub Pages用アーティファクト作成
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build_out/ # ここにデプロイ対象のフォルダを指定
+
+      - name: Commit and Push Logs
+        run: |
+          git config --global user.name "Gemini-Bot"
+          git config --global user.email "bot@example.com"
+          git add . || true
+          if git diff --cached --quiet; then
+            echo "✨ ログ変更なし。"
+          else
+            git commit -m "chore: 📝 自動ビルドログを更新 [skip ci]" || true
+            git push origin HEAD:main || true
+            echo "✅ ログの同期完了！"
+          fi
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v5
+
