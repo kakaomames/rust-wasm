@@ -42,11 +42,11 @@ jobs:
 
       # すべてのビルド・テストステップで working-directory を指定する！
       - name: Build
-        working-directory: ./my-wasm-project
+        working-directory: ./
         run: cargo build --verbose
 
       - name: Run tests
-        working-directory: ./my-wasm-project
+        working-directory: ./
         run: cargo test --verbose
 
       # ビルド成果物を build_out に移動させる（適宜調整してくれ！）
