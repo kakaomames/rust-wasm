@@ -1,0 +1,17 @@
+<script>
+// ... (前略)
+async function run() {
+    await init();
+    const canvas = document.getElementById("mc-canvas");
+    
+    // Rust側で非同期に生成するパターン
+    const engine = await Engine.new(canvas);
+    
+    function loop() {
+        engine.render();
+        requestAnimationFrame(loop);
+    }
+    loop();
+}
+// ... (後略)
+</script>
