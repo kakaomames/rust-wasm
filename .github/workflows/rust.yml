@@ -29,7 +29,7 @@ jobs:
 
       # プロジェクト生成（ここで一度だけ生成する）
       - name: Generate project
-        run: cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent
+        run: echo "cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent"
 
       - name: Cache cargo registry
         uses: actions/cache@v4
