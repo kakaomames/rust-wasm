@@ -25,11 +25,11 @@ jobs:
           components: rustfmt, clippy
 
       - name: Install cargo-generate
-        run: cargo install cargo-generate
+        run: cargo install cargo-generate > i.log.txt
 
       # プロジェクト生成（ここで一度だけ生成する）
       - name: Generate project
-        run: cargo add wasm-bindgen-futures
+        run: cargo add wasm-bindgen-futures >> i.log.txt
 
 
         
