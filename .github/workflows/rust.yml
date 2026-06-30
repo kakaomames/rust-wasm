@@ -45,11 +45,11 @@ jobs:
       # すべてのビルド・テストステップで working-directory を指定する！
       - name: Build
         working-directory: ./
-        run: cargo build --verbose
+        run: cargo build --verbose > log.txt
 
       - name: Run tests
         working-directory: ./
-        run: cargo test --verbose
+        run: cargo test --verbose >> log.txt
 
       # ビルド成果物を build_out に移動させる（適宜調整してくれ！）
       - name: Prepare build artifacts
