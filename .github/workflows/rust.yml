@@ -29,8 +29,10 @@ jobs:
 
       # プロジェクト生成（ここで一度だけ生成する）
       - name: Generate project
-        run: echo "cargo generate --git https://github.com/rustwasm/wasm-pack-template --name my-wasm-project --silent"
+        run: cargo add wasm-bindgen-futures
 
+
+        
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
