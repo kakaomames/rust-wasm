@@ -1,5 +1,4 @@
 use wasm_bindgen::prelude::*;
-use wgpu::util::DeviceExt;
 
 #[wasm_bindgen]
 extern "C" {
@@ -7,7 +6,6 @@ extern "C" {
     fn log(s: &str);
 }
 
-// ログ用関数
 fn mission_log(cat: &str, msg: &str) {
     log(&format!("[{}] {}", cat, msg));
 }
@@ -21,22 +19,28 @@ pub struct Engine {
 
 #[wasm_bindgen]
 impl Engine {
-    #[wasm_bindgen(constructor)]
-    pub async fn new(canvas: web_sys::HtmlCanvasElement) -> Self {
+    // コンストラクタを同期的にして、JS側でPromiseを待つ設計にする
+    pub async fn new(canvas: web_sys::HtmlCanvasElement) -> Result<Engine, JsValue> {
         mission_log("ACTION", "WASMエンジン初期化開始！");
         
         let instance = wgpu::Instance::default();
-        let surface = instance.create_surface_from_canvas(&canvas).unwrap();
-        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default()).await.unwrap();
-        let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None).await.unwrap();
+        // create_surfaceに変更
+        let surface = instance.create_surface(&canvas).map_err(|e| JsValue::from_str(&e.to_string()))?;
+        
+        let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default())
+            .await
+            .ok_or_else(|| JsValue::from_str("Failed to find adapter"))?;
+            
+        let (device, queue) = adapter.request_device(&wgpu::DeviceDescriptor::default(), None)
+            .await
+            .map_err(|e| JsValue::from_str(&e.to_string()))?;
 
         mission_log("SYSTEM", "GPUデバイス接続完了！");
         
-        Self { device, queue, surface }
+        Ok(Self { device, queue, surface })
     }
 
     pub fn render(&self) {
-        // ここで空を塗りつぶす等の描画コマンドを発行する
         mission_log("RENDER", "フレーム描画処理実行中...");
     }
 }
