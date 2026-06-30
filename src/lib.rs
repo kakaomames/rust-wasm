@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use wgpu::Instance;
+use wgpu::SurfaceTarget; // これを必ず使う
 
 #[wasm_bindgen]
 pub struct Engine {
@@ -13,10 +13,11 @@ impl Engine {
     pub async fn new(canvas: web_sys::HtmlCanvasElement) -> Result<Engine, JsValue> {
         let instance = wgpu::Instance::default();
         
-        // 修正：Web専用の変換を行うためのメソッドを使う
-        // 最新版の wgpu では、Canvas自体を渡して変換する
+        // 修正：Canvas を SurfaceTarget に明示的に変換して渡す
+        let target = SurfaceTarget::from(canvas);
+        
         let surface = instance
-            .create_surface_from_canvas(&canvas) // これが一番確実なパスだ！
+            .create_surface(target)
             .map_err(|e| JsValue::from_str(&e.to_string()))?;
         
         let adapter = instance.request_adapter(&wgpu::RequestAdapterOptions::default())
