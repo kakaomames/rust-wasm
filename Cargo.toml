@@ -7,11 +7,11 @@ edition = "2021"
 crate-type = ["cdylib"]
 
 [dependencies]
+# 既存の依存に加え、featureを強化する
+web-sys = { version = "0.3", features = ["HtmlCanvasElement", "Window", "Document", "Element", "WebGl2RenderingContext"] }
+# wgpuのwasm機能を明示的に有効にする
+wgpu = { version = "24.0", features = ["webgl"] }
 wasm-bindgen = "0.2"
-# 描画用ライブラリ
-wgpu = "24.0" # WebGPU向け
 # 行列演算用
 glam = "0.29"
-# ブラウザAPIとの連携
-web-sys = { version = "0.3", features = ["HtmlCanvasElement", "Window", "Document", "Element"] }
 js-sys = "0.3"
